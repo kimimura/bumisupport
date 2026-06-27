@@ -33,6 +33,7 @@ export default function CityPage() {
   const [city, setCity] = useState<City | null>(null)
   const [notFound, setNotFound] = useState(false)
   const [businesses, setBusinesses] = useState<Business[]>([])
+  const [statusOptions, setStatusOptions] = useState<string[]>([])
   const [loading, setLoading] = useState(true)
   const [search, setSearch] = useState('')
   const [filterStatus, setFilterStatus] = useState('ALL')
@@ -40,6 +41,11 @@ export default function CityPage() {
   const [showModal, setShowModal] = useState(false)
   const [selected, setSelected] = useState<Business | null>(null)
   const { registerOnChanged } = useManage()
+
+  useEffect(() => {
+    supabase.from('dropdown_options').select('value').eq('type', 'status').order('value')
+      .then(({ data }) => { if (data) setStatusOptions(data.map(r => r.value)) })
+  }, [])
 
   useEffect(() => {
     async function loadCity() {
@@ -65,7 +71,11 @@ export default function CityPage() {
   useEffect(() => {
     if (!city) return
     fetchBusinesses()
-    registerOnChanged(fetchBusinesses)
+    registerOnChanged(() => {
+      fetchBusinesses()
+      supabase.from('dropdown_options').select('value').eq('type', 'status').order('value')
+        .then(({ data }) => { if (data) setStatusOptions(data.map(r => r.value)) })
+    })
   }, [city])
 
   if (notFound) {
@@ -126,8 +136,7 @@ export default function CityPage() {
               className="appearance-none border border-gray-300 bg-white pl-3 pr-8 py-1.5 text-sm rounded-sm focus:outline-none focus:border-gray-400"
             >
               <option value="ALL">All Status</option>
-              <option value="BUMI">Bumi</option>
-              <option value="NON BUMI">Non-Bumi</option>
+              {statusOptions.map(s => <option key={s} value={s}>{s}</option>)}
             </select>
             <span className="pointer-events-none absolute right-2.5 top-1/2 -translate-y-1/2 text-gray-400 text-xs">▾</span>
           </div>

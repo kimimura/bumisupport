@@ -47,6 +47,7 @@ export default function ManageOptionsModal({ type, label, onClose, onChanged }: 
   }
 
   async function requestDelete(opt: Option) {
+    setDeleteError(null)
     const { count } = await supabase
       .from('businesses')
       .select('*', { count: 'exact', head: true })

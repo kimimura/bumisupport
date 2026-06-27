@@ -87,12 +87,12 @@ export default function AddBusinessModal({ cityId, onClose, onAdded }: Props) {
 
         <form onSubmit={handleSubmit} className="px-5 py-4 space-y-4">
           {([
-            { label: 'Company Name', key: 'company', required: true },
-            { label: 'Owner', key: 'owner' },
-            { label: 'Location', key: 'location' },
-            { label: 'Tier', key: 'tier' },
-            { label: 'Price Range', key: 'price_range' },
-          ] as const).map(f => (
+            { label: 'Company Name', key: 'company' as const, required: true },
+            { label: 'Owner', key: 'owner' as const },
+            { label: 'Location', key: 'location' as const },
+            { label: 'Tier', key: 'tier' as const },
+            { label: 'Price Range', key: 'price_range' as const },
+          ] as { label: string; key: keyof typeof EMPTY_FORM; required?: boolean }[]).map(f => (
             <div key={f.key}>
               <label className="block text-xs font-medium text-gray-700 mb-1">
                 {f.label}{f.required && <span className="text-red-500 ml-0.5">*</span>}
